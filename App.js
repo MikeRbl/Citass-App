@@ -1,27 +1,17 @@
-<<<<<<< Updated upstream
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-=======
 import { useState } from 'react'; 
-import { SafeAreaView, Text, Pressable, StyleSheet } from 'react-native';
+import { SafeAreaView, Text, Pressable, StyleSheet, FlatList } from 'react-native';
 import Formulario from './components/Formulario';
+import Paciente from './components/Paciente';
 
 export default function App() {
   const [modalVisible, setModalVisible] = useState(false);
   const [pacientes, setPacientes] = useState([]);
+  const [paciente, setPaciente] = useState({}); 
+  const [modalPaciente, setModalPaciente] = useState(false); 
 
   const cerrarModal = () => {
     setModalVisible(false);
   }
-
-  console.log("Lista de citas actual:", pacientes);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -37,6 +27,25 @@ export default function App() {
         <Text style={styles.btnTextoNuevaCita}>Nueva Cita</Text>
       </Pressable>
 
+      {pacientes.length === 0 ? (
+        <Text style={styles.noPacientes}> No hay pacientes aun</Text>
+      ) : (
+        <FlatList
+          data={pacientes}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => {
+            return (
+              <Paciente
+                item={item}
+                setModalVisible={setModalVisible}
+                setPaciente={setPaciente}
+                setModalPaciente={setModalPaciente} 
+              />
+            );
+          }}
+        />
+      )}
+
       {modalVisible && (
         <Formulario
           modalVisible={modalVisible}
@@ -46,20 +55,12 @@ export default function App() {
         />
       )}
     </SafeAreaView>
->>>>>>> Stashed changes
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-<<<<<<< Updated upstream
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
-=======
     padding: 20
   },
   titulo: {
@@ -84,6 +85,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '900',
     textTransform: 'uppercase'
+  },
+  noPacientes: {
+    marginTop: 40,
+    textAlign: 'center',
+    fontSize: 24,
+    fontWeight: '600'
   }
 });
->>>>>>> Stashed changes

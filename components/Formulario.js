@@ -1,16 +1,30 @@
-import { View, Text, Modal, SafeAreaView, ScrollView, Pressable, TextInput, StyleSheet, Alert } from "react-native";
-import React, { useState } from "react";
+import { View, Text, Modal, ScrollView, Pressable, TextInput, StyleSheet, Alert } from "react-native";
+import React, { useState, useRef } from "react";
+import { DatePicker } from "@s77rt/react-native-date-picker";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Formulario = ({ modalVisible, cerrarModal, pacientes, setPacientes }) => {
     const [paciente, setPaciente] = useState('');
     const [propietario, setPropietario] = useState('');
     const [email, setEmail] = useState('');
     const [telefono, setTelefono] = useState('');
-    const [fecha, setFecha] = useState('');
+    const [fecha, setFecha] = useState(null); 
     const [sintomas, setSintomas] = useState('');
 
-    const handlerCita = () => {
-      if([paciente, propietario, email, telefono, fecha, sintomas].includes('')){
+    const datePicker = useRef(null); 
+
+    const limpiarYBuscarSalida = () => {
+        setPaciente('');
+        setPropietario('');
+        setEmail('');
+        setTelefono('');
+        setFecha(null);
+        setSintomas('');
+        cerrarModal();
+    };
+
+    const handleCita = () => {
+      if([paciente, propietario, email, telefono, sintomas].includes('') || !fecha){
         Alert.alert('Error', 'Todos los campos son obligatorios');
         return;
       }
@@ -21,19 +35,12 @@ const Formulario = ({ modalVisible, cerrarModal, pacientes, setPacientes }) => {
         propietario,
         email,
         telefono,
-        fecha,
+        fecha, 
         sintomas
       };
 
       setPacientes([...pacientes, nuevoPaciente]);
-
-      setPaciente('');
-      setPropietario('');
-      setEmail('');
-      setTelefono('');
-      setFecha('');
-      setSintomas('');
-      cerrarModal();
+      limpiarYBuscarSalida();
     }
 
     return (
@@ -43,7 +50,7 @@ const Formulario = ({ modalVisible, cerrarModal, pacientes, setPacientes }) => {
 
                     <Text style={styles.titulo}>Nueva Cita</Text>
 
-                    <Pressable style={styles.btnCancelar} onPress={cerrarModal}>
+                    <Pressable style={styles.btnCancelar} onPress={limpiarYBuscarSalida}>
                         <Text style={styles.btnCancelarTexto}>X Cancelar</Text>
                     </Pressable>
 
@@ -94,13 +101,34 @@ const Formulario = ({ modalVisible, cerrarModal, pacientes, setPacientes }) => {
                     </View>
 
                     <View style={styles.campo}>
-                        <Text style={styles.label}>Fecha de Cita</Text>
-                        <TextInput 
-                          style={styles.input}
-                          placeholder="DD/MM/AAAA"
-                          placeholderTextColor={"#666"}
-                          value={fecha}
-                          onChangeText={setFecha}
+                        <Text style={styles.label}>Fecha y Hora</Text>
+                        <Pressable
+                          style={styles.inputPicker}
+                          onPress={() => datePicker.current?.showPicker()}
+                        >
+                          <Text
+                            style={[
+                              styles.inputText,
+                              !fecha && styles.placeholderText,
+                            ]}
+                          >
+                            {fecha
+                              ? fecha.toLocaleString([], {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })
+                              : "Selecciona Fecha y Hora..."}
+                          </Text>
+                          <Text style={styles.iconoCalendario}>📅</Text>
+                        </Pressable>
+
+                        <DatePicker
+                            ref={datePicker}
+                            date={fecha || new Date()} 
+                            onDateChange={(date) => setFecha(date)}
                         />
                     </View>
 
@@ -117,7 +145,7 @@ const Formulario = ({ modalVisible, cerrarModal, pacientes, setPacientes }) => {
                         />
                     </View>
 
-                    <Pressable style={styles.btnNuevaCita} onPress={handlerCita}>
+                    <Pressable style={styles.btnNuevaCita} onPress={handleCita}>
                         <Text style={styles.btnNuevaCitaTexto}>Guardar</Text>
                     </Pressable>
                 </ScrollView>
@@ -125,66 +153,36 @@ const Formulario = ({ modalVisible, cerrarModal, pacientes, setPacientes }) => {
         </Modal>
     );
 }
-
 const styles = StyleSheet.create({
-  formulario: {
-    backgroundColor: "#6D28D9",
-    flex: 1,
-  },
-  titulo: {
-    fontSize: 30,
-    fontWeight: "600",
-    textAlign: "center",
-    marginTop: 30,
-    color: "#FFF",
-  },
-  btnCancelar: {
-    marginVertical: 30,
-    backgroundColor: "#5827A4",
-    marginHorizontal: 30,
-    padding: 15,
-    borderRadius: 10,
-  },
-  btnCancelarTexto: {
-    color: "#FFF",
-    textAlign: "center",
-    fontWeight: "900",
-    fontSize: 16,
-    textTransform: "uppercase",
-  },
-  campo: {
-    marginTop: 10,
-    marginHorizontal: 30,
-  },
-  label: {
-    color: "#FFF",
-    marginBottom: 10,
-    marginTop: 15,
-    fontSize: 20,
-    fontWeight: "600",
-  },
-  input: {
+  // Tus estilos originales...
+  formulario: { backgroundColor: "#6D28D9", flex: 1, },
+  titulo: { fontSize: 30, fontWeight: "600", textAlign: "center", marginTop: 30, color: "#FFF", },
+  btnCancelar: { marginVertical: 30, backgroundColor: "#5827A4", marginHorizontal: 30, padding: 15, borderRadius: 10, },
+  btnCancelarTexto: { color: "#FFF", textAlign: "center", fontWeight: "900", fontSize: 16, textTransform: "uppercase", },
+  campo: { marginTop: 10, marginHorizontal: 30, },
+  label: { color: "#FFF", marginBottom: 10, marginTop: 15, fontSize: 20, fontWeight: "600", },
+  input: { backgroundColor: "#FFF", padding: 15, borderRadius: 10, },
+  btnNuevaCita: { marginVertical: 50, backgroundColor: "#F59E0B", paddingVertical: 15, marginHorizontal: 30, borderRadius: 10, },
+  btnNuevaCitaTexto: { color: "#5827A4", textAlign: "center", fontWeight: "900", fontSize: 16, textTransform: "uppercase", },
+  
+  // Estilos obligatorios para el Date Picker del profesor:
+  inputPicker: {
     backgroundColor: "#FFF",
     padding: 15,
     borderRadius: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  sintomasInput: {
-    height: 100,
-    textAlignVertical: 'top',
-  },
-  btnNuevaCita: {
-    marginVertical: 50,
-    backgroundColor: "#F59E0B",
-    paddingVertical: 15,
-    marginHorizontal: 30,
-    borderRadius: 10,
-  },
-  btnNuevaCitaTexto: {
-    color: "#5827A4",
-    textAlign: "center",
-    fontWeight: "900",
+  inputText: {
     fontSize: 16,
-    textTransform: "uppercase",
+    color: "#000", 
+  },
+  placeholderText: {
+    color: "#666",
+  },
+  iconoCalendario: {
+    fontSize: 18,
   },
 });
 
