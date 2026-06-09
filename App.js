@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { SafeAreaView, Text, Pressable, StyleSheet, FlatList } from 'react-native';
 import Formulario from './components/Formulario';
 import Paciente from './components/Paciente';
+import InformacionPaciente from './components/InformacionPacientes';
 
 export default function App() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -52,6 +53,16 @@ export default function App() {
           cerrarModal={cerrarModal}
           pacientes={pacientes}
           setPacientes={setPacientes}
+          paciente={paciente}
+          setPaciente={setPaciente}
+        />
+      )}
+
+      {modalPaciente && (
+        <InformacionPaciente 
+          paciente={paciente}
+          setPaciente={setPaciente}
+          setModalPaciente={setModalPaciente}
         />
       )}
     </SafeAreaView>
@@ -59,37 +70,10 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20
-  },
-  titulo: {
-    textAlign: 'center',
-    fontSize: 30,
-    color: '#374151',
-    fontWeight: '600'
-  },
-  tituloBold: {
-    fontWeight: '900',
-    color: '#6D28D9'
-  },
-  btnNuevaCita: {
-    backgroundColor: '#6D28D9',
-    padding: 15,
-    marginTop: 20,
-    borderRadius: 10,
-    alignItems: 'center'
-  },
-  btnTextoNuevaCita: {
-    color: '#FFF',
-    fontSize: 18,
-    fontWeight: '900',
-    textTransform: 'uppercase'
-  },
-  noPacientes: {
-    marginTop: 40,
-    textAlign: 'center',
-    fontSize: 24,
-    fontWeight: '600'
-  }
+  container: { flex: 1, padding: 20 },
+  titulo: { textAlign: 'center', fontSize: 30, color: '#374151', fontWeight: '600' },
+  tituloBold: { fontWeight: '900', color: '#6D28D9' },
+  btnNuevaCita: { backgroundColor: '#6D28D9', padding: 15, marginTop: 20, borderRadius: 10, alignItems: 'center' },
+  btnTextoNuevaCita: { color: '#FFF', textAlign: 'center', fontWeight: '900', fontSize: 18, textTransform: 'uppercase' },
+  noPacientes: { marginTop: 40, textAlign: 'center', fontSize: 24, fontWeight: '600', color: '#374151' }
 });
