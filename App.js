@@ -1,5 +1,5 @@
 import { useState } from 'react'; 
-import { SafeAreaView, Text, Pressable, StyleSheet, FlatList } from 'react-native';
+import { SafeAreaView, Text, Pressable, StyleSheet, FlatList, Alert } from 'react-native';
 import Formulario from './components/Formulario';
 import Paciente from './components/Paciente';
 import InformacionPaciente from './components/InformacionPacientes';
@@ -12,6 +12,20 @@ export default function App() {
 
   const cerrarModal = () => {
     setModalVisible(false);
+  }
+
+  const pacienteEliminar = (id) => {
+    Alert.alert(
+      '¿Deseas eliminar este paciente?',
+      'Un paciente eliminado no se puede recuperar',
+      [
+        { text: 'Cancelar' },
+        { text: 'Sí, Eliminar', onPress: () => {
+            const pacientesActualizados = pacientes.filter( pacienteState => pacienteState.id !== id);
+            setPacientes(pacientesActualizados);
+        }}
+      ]
+    )
   }
 
   return (
@@ -40,7 +54,8 @@ export default function App() {
                 item={item}
                 setModalVisible={setModalVisible}
                 setPaciente={setPaciente}
-                setModalPaciente={setModalPaciente} 
+                setModalPaciente={setModalPaciente}
+                pacienteEliminar={pacienteEliminar}
               />
             );
           }}
