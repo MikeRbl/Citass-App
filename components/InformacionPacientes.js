@@ -71,9 +71,10 @@ const InformacionPaciente = ({ paciente, setPaciente, setModalPaciente }) => {
 };
 
 const styles = StyleSheet.create({
-    contenedor: { backgroundColor: '#6D28D9', flex: 1 },
+    // CAMBIO A FONDO AMARILLO AQUÍ
+    contenedor: { backgroundColor: '#F59E0B', flex: 1 }, 
     titulo: { fontSize: 30, fontWeight: '900', textAlign: 'center', marginTop: 30, color: '#FFF' },
-    btnCerrar: { marginVertical: 20, backgroundColor: '#5827A4', marginHorizontal: 30, padding: 15, borderRadius: 10 },
+    btnCerrar: { marginVertical: 20, backgroundColor: '#8F4E06', marginHorizontal: 30, padding: 15, borderRadius: 10 },
     btnCerrarTexto: { color: '#FFF', textAlign: 'center', fontWeight: '900', fontSize: 16, textTransform: 'uppercase' },
     contenido: { backgroundColor: '#FFF', marginHorizontal: 30, borderRadius: 10, padding: 20, marginBottom: 30 },
     campo: { marginBottom: 20 },

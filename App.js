@@ -1,5 +1,5 @@
 import { useState } from 'react'; 
-import { SafeAreaView, Text, Pressable, StyleSheet, FlatList, Alert } from 'react-native';
+import { SafeAreaView, Text, Pressable, StyleSheet, FlatList, Alert, Platform} from 'react-native';
 import Formulario from './components/Formulario';
 import Paciente from './components/Paciente';
 import InformacionPaciente from './components/InformacionPacientes';
@@ -14,18 +14,28 @@ export default function App() {
     setModalVisible(false);
   }
 
-  const pacienteEliminar = (id) => {
-    Alert.alert(
-      '¿Deseas eliminar este paciente?',
-      'Un paciente eliminado no se puede recuperar',
-      [
-        { text: 'Cancelar' },
-        { text: 'Sí, Eliminar', onPress: () => {
+ const pacienteEliminar = (id) => {
+    if (Platform.OS === 'web') {
+        // Alerta nativa para navegadores web
+        const confirmacion = window.confirm('¿Deseas eliminar este paciente? Un paciente eliminado no se puede recuperar.');
+        if (confirmacion) {
             const pacientesActualizados = pacientes.filter( pacienteState => pacienteState.id !== id);
             setPacientes(pacientesActualizados);
-        }}
-      ]
-    )
+        }
+    } else {
+        // Alerta nativa para celulares (Android/iOS)
+        Alert.alert(
+          '¿Deseas eliminar este paciente?',
+          'Un paciente eliminado no se puede recuperar',
+          [
+            { text: 'Cancelar' },
+            { text: 'Sí, Eliminar', onPress: () => {
+                const pacientesActualizados = pacientes.filter( pacienteState => pacienteState.id !== id);
+                setPacientes(pacientesActualizados);
+            }}
+          ]
+        )
+    }
   }
 
   return (
